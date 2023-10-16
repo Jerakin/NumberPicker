@@ -212,11 +212,22 @@ class _NumberPickerState extends State<NumberPicker> {
             style: itemStyle,
           );
 
-    return Container(
-      width: widget.itemWidth,
-      height: widget.itemHeight,
-      alignment: Alignment.center,
-      child: child,
+    return GestureDetector(
+      onTap: () {
+        if (!isExtra) {
+          widget.onChanged(value);
+          Future.delayed(
+            const Duration(milliseconds: 100),
+                () => _maybeCenterValue(),
+          );
+        }
+      },
+      child: Container(
+        width: widget.itemWidth,
+        height: widget.itemHeight,
+        alignment: Alignment.center,
+        child: child,
+      ),
     );
   }
 
