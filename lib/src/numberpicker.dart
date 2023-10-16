@@ -15,7 +15,7 @@ class NumberPicker extends StatefulWidget {
   final int value;
 
   /// Called when selected value changes
-  final ValueChanged<int> onChanged;
+  final ValueChanged<int>? onChanged;
 
   /// Specifies how many items should be shown - defaults to 3
   final int itemCount;
@@ -61,7 +61,7 @@ class NumberPicker extends StatefulWidget {
     required this.minValue,
     required this.maxValue,
     required this.value,
-    required this.onChanged,
+    this.onChanged,
     this.itemCount = 3,
     this.step = 1,
     this.itemHeight = 50,
@@ -110,9 +110,11 @@ class _NumberPickerState extends State<NumberPicker> {
         _intValueFromIndex(indexOfMiddleElement + additionalItemsOnEachSide);
 
     if (widget.value != intValueInTheMiddle) {
-      widget.onChanged(intValueInTheMiddle);
-      if (widget.haptics) {
-        HapticFeedback.selectionClick();
+      if (widget.onChanged != null) {
+        widget.onChanged!(intValueInTheMiddle);
+        if (widget.haptics) {
+          HapticFeedback.selectionClick();
+        }
       }
     }
     Future.delayed(
@@ -166,6 +168,7 @@ class _NumberPickerState extends State<NumberPicker> {
           children: [
             if (widget.infiniteLoop)
               InfiniteListView.builder(
+                physics: widget.onChanged == null ? NeverScrollableScrollPhysics() : BouncingScrollPhysics(),
                 scrollDirection: widget.axis,
                 controller: _scrollController as InfiniteScrollController,
                 itemExtent: itemExtent,
@@ -174,6 +177,7 @@ class _NumberPickerState extends State<NumberPicker> {
               )
             else
               ListView.builder(
+                physics: widget.onChanged == null ? NeverScrollableScrollPhysics() : BouncingScrollPhysics(),
                 itemCount: listItemsCount,
                 scrollDirection: widget.axis,
                 controller: _scrollController,
@@ -215,11 +219,13 @@ class _NumberPickerState extends State<NumberPicker> {
     return GestureDetector(
       onTap: () {
         if (!isExtra) {
-          widget.onChanged(value);
-          Future.delayed(
-            const Duration(milliseconds: 100),
-                () => _maybeCenterValue(),
-          );
+          if (widget.onChanged != null) {
+            widget.onChanged!(value);
+            Future.delayed(
+              const Duration(milliseconds: 100),
+                  () => _maybeCenterValue(),
+            );
+          }
         }
       },
       child: Container(
