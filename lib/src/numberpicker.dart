@@ -166,6 +166,11 @@ class _NumberPickerState extends State<NumberPicker> {
         },
         child: Stack(
           children: [
+            _NumberPickerSelectedItemDecoration(
+              axis: widget.axis,
+              itemExtent: itemExtent,
+              decoration: widget.decoration,
+            ),
             if (widget.infiniteLoop)
               InfiniteListView.builder(
                 physics: widget.onChanged == null ? NeverScrollableScrollPhysics() : BouncingScrollPhysics(),
@@ -185,11 +190,6 @@ class _NumberPickerState extends State<NumberPicker> {
                 itemBuilder: _itemBuilder,
                 padding: EdgeInsets.zero,
               ),
-            _NumberPickerSelectedItemDecoration(
-              axis: widget.axis,
-              itemExtent: itemExtent,
-              decoration: widget.decoration,
-            ),
           ],
         ),
       ),
